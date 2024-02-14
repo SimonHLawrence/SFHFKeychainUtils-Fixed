@@ -125,20 +125,24 @@ static NSString *SFHFKeychainUtilsErrorDomain = @"SFHFKeychainUtilsErrorDomain";
 
     *error = nil;
 
+    UInt32 passwordLength = [password lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
+
     if (item) {
         status = SecKeychainItemModifyAttributesAndData(item,
                                                         NULL,
-                                                        strlen([password UTF8String]),
+                                                        passwordLength,
                                                         [password UTF8String]);
 
         CFRelease(item);
     } else {
+        UInt32 usernameLength = [username lengthOfBytesUsingEncoding: NSUTF8StringEncoding];
+        UInt32 serviceNameLength = [serviceName lengthOfBytesUsingEncoding: NSUTF8StringEncoding];
         status = SecKeychainAddGenericPassword(NULL,
-                                               strlen([serviceName UTF8String]),
+                                               serviceNameLength,
                                                [serviceName UTF8String],
-                                               strlen([username UTF8String]),
+                                               usernameLength,
                                                [username UTF8String],
-                                               strlen([password UTF8String]),
+                                               passwordLength,
                                                [password UTF8String],
                                                NULL);
     }
@@ -193,10 +197,12 @@ static NSString *SFHFKeychainUtilsErrorDomain = @"SFHFKeychainUtilsErrorDomain";
 
     SecKeychainItemRef item;
 
+    UInt32 usernameLength = [username lengthOfBytesUsingEncoding: NSUTF8StringEncoding];
+    UInt32 serviceNameLength = [serviceName lengthOfBytesUsingEncoding: NSUTF8StringEncoding];
     OSStatus status = SecKeychainFindGenericPassword(NULL,
-                                                     strlen([serviceName UTF8String]),
+                                                     serviceNameLength,
                                                      [serviceName UTF8String],
-                                                     strlen([username UTF8String]),
+                                                     usernameLength,
                                                      [username UTF8String],
                                                      NULL,
                                                      NULL,
